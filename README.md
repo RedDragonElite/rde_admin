@@ -1,10 +1,10 @@
 # rde_admin
 🐉 ULTIMATE IN-GAME ADMIN DESKTOP V1.1.1 — Built on ox_core & Native RPC! 🛠
 
-<img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/PLACEHOLDER_BANNER" />
+<img width="1024" height="1024" alt="AiArt_1772326578744" src="https://github.com/user-attachments/assets/4ae54f1b-63ef-4efa-99eb-ce21dcfafdcc" />
 
 PREVIEW:
-https://www.youtube.com/watch?v=YOUR_VIDEO_ID
+[https://www.youtube.com/watch?v=YOUR_VIDEO_ID](https://youtu.be/_RxyxfHsvO4)
 
 # 🐉 rde_admin
 
@@ -63,7 +63,12 @@ We said no.
 
 ## 📸 Screenshots
 
-> Coming soon — drop a PR with your screenshots!
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/09d024c2-b71d-4874-a5fc-91a0bee9c846" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/937ef934-34d1-4a8c-88c4-c2118cc4cb01" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/20559b39-f0db-4f89-afe6-576b2945b270" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/e3e6778a-c686-46d0-94b5-db89f69c71f3" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/29e66e95-4657-4aca-a413-00d06efc57e6" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/51f702ac-38a9-4fd2-92c4-ef94fba3d693" />
 
 The dashboard, players list, database browser, and live console — all in one draggable desktop window.
 
