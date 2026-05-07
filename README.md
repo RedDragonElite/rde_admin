@@ -4,7 +4,7 @@
 <img width="1024" height="1024" alt="AiArt_1772326578744" src="https://github.com/user-attachments/assets/4ae54f1b-63ef-4efa-99eb-ce21dcfafdcc" />
 
 PREVIEW:
-[https://www.youtube.com/watch?v=YOUR_VIDEO_ID](https://youtu.be/_RxyxfHsvO4)
+[[https://www.youtube.com/watch?v=RxyxfHsvO4]](https://www.youtube.com/watch?v=RxyxfHsvO4)
 
 # 🐉 rde_admin
 
