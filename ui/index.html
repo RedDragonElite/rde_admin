@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RDE Admin</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════
+     RDE ADMIN DESKTOP
+     Red Dragon Elite | rd-elite.com
+     ════════════════════════════════════════════════════ -->
+
+<div id="desktop">
+
+  <!-- ── MAIN WINDOW ─────────────────────────────────── -->
+  <div class="window" id="win-main" style="left:80px;top:50px;width:900px;height:620px;">
+    <div class="window-titlebar" id="win-main-bar">
+      <span class="window-icon">🐉</span>
+      <span class="window-title">RDE ADMIN PANEL — RED DRAGON ELITE</span>
+      <span id="status-pill" data-state="connecting" title="Backend status"
+            style="margin-left:12px;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;letter-spacing:.05em;">Connecting...</span>
+      <div class="window-controls">
+        <button class="win-btn min" onclick="minimizeWin('win-main')"></button>
+        <button class="win-btn max" onclick="maximizeWin('win-main')"></button>
+        <button class="win-btn close" onclick="closePanelFromUI()" title="Close (ESC)"></button>
+      </div>
+    </div>
+
+    <div class="window-body">
+      <div class="panel-layout">
+
+        <!-- Sidebar nav -->
+        <div class="panel-sidebar">
+          <div class="nav-label">Main</div>
+          <button class="nav-btn active" onclick="switchPage('stats')" id="nav-stats">
+            <span class="nav-icon">📊</span> Dashboard
+          </button>
+          <button class="nav-btn" onclick="switchPage('players')" id="nav-players">
+            <span class="nav-icon">👥</span> Players
+          </button>
+
+          <div class="nav-label">Tools</div>
+          <button class="nav-btn" onclick="switchPage('console')" id="nav-console">
+            <span class="nav-icon">📟</span> Console
+          </button>
+          <button class="nav-btn" onclick="switchPage('database')" id="nav-database">
+            <span class="nav-icon">🗄️</span> Database
+          </button>
+          <button class="nav-btn" onclick="switchPage('bans')" id="nav-bans">
+            <span class="nav-icon">🚫</span> Bans
+          </button>
+
+          <div style="margin-top:auto;padding:8px 12px;font-size:10px;color:var(--text-muted)">
+            Press <kbd style="background:var(--bg-card);border:1px solid var(--border);border-radius:3px;padding:1px 5px">ESC</kbd> to close
+          </div>
+        </div>
+
+        <!-- Pages -->
+        <div class="panel-content">
+
+          <!-- ── DASHBOARD ─────────────────────────── -->
+          <div class="panel-page active" id="page-stats">
+            <div class="section-header">
+              <div>
+                <div class="section-title">📊 Server Dashboard</div>
+                <div class="section-sub" id="server-name-label">Loading...</div>
+              </div>
+              <button class="btn btn-ghost btn-sm" onclick="loadStats()" style="margin-left:auto">↻ Refresh</button>
+            </div>
+            <div class="stats-grid" id="stats-grid">
+              <div class="stat-card">
+                <div class="stat-label">Players Online</div>
+                <div class="stat-value" id="stat-players">—</div>
+                <div class="stat-sub" id="stat-maxplayers">/ — max</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Resources</div>
+                <div class="stat-value" id="stat-resources">—</div>
+                <div class="stat-sub">loaded resources</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Uptime</div>
+                <div class="stat-value" id="stat-uptime">—</div>
+                <div class="stat-sub">since last restart</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">TxAdmin</div>
+                <div class="stat-value" style="font-size:14px;margin-top:4px">
+                  <a href="#" onclick="openTxAdmin();return false;" style="color:var(--blue);text-decoration:none">⎋ Open</a>
+                </div>
+                <div class="stat-sub">admin panel</div>
+              </div>
+            </div>
+            <div style="padding:0 12px 8px;flex:1;overflow:auto;">
+              <div class="nav-label" style="padding:8px 0 6px">Live Console Feed</div>
+              <div class="console-output" id="stats-console" style="height:220px;border:1px solid var(--border);border-radius:var(--radius);"></div>
+            </div>
+          </div>
+
+          <!-- ── PLAYERS ───────────────────────────── -->
+          <div class="panel-page" id="page-players">
+            <div class="toolbar">
+              <input class="search-input" type="text" placeholder="🔍 Search players..." id="player-search" oninput="filterPlayers()">
+              <button class="btn btn-ghost btn-sm" onclick="loadPlayers()">↻ Refresh</button>
+              <div style="margin-left:auto;font-size:11px;color:var(--text-muted)" id="player-count-label">0 players</div>
+            </div>
+
+            <div class="table-wrap">
+              <table class="data-table" id="player-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Group</th>
+                    <th>Ping</th>
+                    <th>Health</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="player-tbody"></tbody>
+              </table>
+            </div>
+
+            <!-- Selected player detail -->
+            <div class="player-detail" id="player-detail" style="display:none">
+              <div class="player-detail-header">
+                <span class="player-detail-name" id="detail-name"></span>
+                <span class="badge" id="detail-group"></span>
+                <span style="margin-left:auto;font-size:11px;color:var(--text-muted)" id="detail-license"></span>
+              </div>
+              <div class="player-actions">
+                <button class="btn btn-ghost btn-sm" onclick="playerAction('teleportToPlayer')">📍 TP to</button>
+                <button class="btn btn-ghost btn-sm" onclick="playerAction('bring')">⬆ Bring</button>
+                <button class="btn btn-ghost btn-sm" onclick="playerAction('spectate')">👁 Spectate</button>
+                <button class="btn btn-ghost btn-sm" onclick="playerAction('freeze', true)">🧊 Freeze</button>
+                <button class="btn btn-ghost btn-sm" onclick="playerAction('freeze', false)">✅ Unfreeze</button>
+                <button class="btn btn-ghost btn-sm" onclick="playerAction('god', true)">🛡 God ON</button>
+                <button class="btn btn-ghost btn-sm" onclick="playerAction('god', false)">⚔ God OFF</button>
+                <button class="btn btn-success btn-sm" onclick="playerAction('revive')">💊 Revive</button>
+                <button class="btn btn-ghost btn-sm" onclick="openWarnModal()">⚠ Warn</button>
+                <button class="btn btn-danger btn-sm" onclick="openKickModal()">🦶 Kick</button>
+                <button class="btn btn-danger btn-sm" onclick="openBanModal()">🚫 Ban</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── CONSOLE ────────────────────────────── -->
+          <div class="panel-page" id="page-console">
+            <div class="toolbar">
+              <span style="font-size:11px;color:var(--text-secondary)">Server Console — live relay</span>
+              <button class="btn btn-ghost btn-sm" onclick="clearConsole()" style="margin-left:auto">✕ Clear</button>
+            </div>
+            <div class="console-output" id="console-output"></div>
+            <div class="console-input-row">
+              <span class="console-prompt">&gt;</span>
+              <input class="console-input" type="text" id="console-cmd"
+                placeholder="Type a server command and press Enter..."
+                onkeydown="handleConsoleKey(event)">
+              <button class="btn btn-primary btn-sm" onclick="sendConsoleCmd()">Send</button>
+            </div>
+          </div>
+
+          <!-- ── DATABASE ───────────────────────────── -->
+          <div class="panel-page" id="page-database">
+            <div class="db-layout">
+              <div class="db-sidebar">
+                <div class="db-sidebar-header">
+                  Tables
+                  <button class="btn btn-ghost btn-icon btn-sm" onclick="loadTables()" data-tip="Refresh">↻</button>
+                </div>
+                <div class="db-table-list" id="db-table-list">
+                  <div class="empty-state" style="padding:20px 0">
+                    <div class="e-icon">🗄️</div>
+                    <div class="e-text" style="font-size:11px">Loading...</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="db-main">
+                <div class="query-bar">
+                  <input class="query-input" type="text" id="db-query-input"
+                    placeholder="SELECT * FROM players LIMIT 10  — press Enter or click Run"
+                    onkeydown="if(event.key==='Enter')runQuery()">
+                  <button class="btn btn-primary btn-sm" onclick="runQuery()">▶ Run</button>
+                  <button class="btn btn-ghost btn-sm" onclick="showInsertModal()" id="db-insert-btn" style="display:none">+ Insert</button>
+                </div>
+                <div class="toolbar" style="gap:6px">
+                  <input class="search-input" type="text" id="db-filter-val" placeholder="Filter value..."
+                    oninput="applyDbFilter()" style="max-width:200px">
+                  <select class="form-select" id="db-filter-col" style="width:140px;height:28px;font-size:11px;padding:0 6px;" onchange="applyDbFilter()">
+                    <option value="">All columns</option>
+                  </select>
+                  <span style="margin-left:auto;font-size:11px;color:var(--text-muted)" id="db-row-count"></span>
+                </div>
+                <div class="table-wrap">
+                  <table class="data-table" id="db-data-table">
+                    <thead><tr id="db-thead-row"></tr></thead>
+                    <tbody id="db-tbody"></tbody>
+                  </table>
+                </div>
+                <div class="pagination">
+                  <span class="page-info" id="db-page-info">Select a table</span>
+                  <button class="btn btn-ghost btn-sm" id="db-prev" onclick="dbPrevPage()" disabled>‹ Prev</button>
+                  <button class="btn btn-ghost btn-sm" id="db-next" onclick="dbNextPage()">Next ›</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── BANS ───────────────────────────────── -->
+          <div class="panel-page" id="page-bans">
+            <div class="toolbar">
+              <span style="font-size:12px;font-weight:600">🚫 Active Bans</span>
+              <button class="btn btn-ghost btn-sm" onclick="loadBans()" style="margin-left:auto">↻ Refresh</button>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table" id="ban-table">
+                <thead>
+                  <tr>
+                    <th>Player</th>
+                    <th>Reason</th>
+                    <th>Banned By</th>
+                    <th>Expires</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="ban-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+        </div><!-- /panel-content -->
+      </div><!-- /panel-layout -->
+    </div><!-- /window-body -->
+    <div class="window-resize" id="win-main-resize"></div>
+  </div><!-- /win-main -->
+
+  <!-- ── TASKBAR ─────────────────────────────────────── -->
+  <div id="taskbar">
+    <div class="taskbar-brand">
+      <span class="dragon">🐉</span>
+      <span class="label">RDE Admin</span>
+    </div>
+    <button class="taskbar-btn active" id="tb-main" onclick="toggleWin('win-main')">
+      <span class="tb-icon">🖥️</span> Admin Panel
+    </button>
+    <div class="taskbar-clock" id="taskbar-clock">00:00:00</div>
+  </div>
+
+  <!-- ── MODAL: KICK ─────────────────────────────────── -->
+  <div class="modal-overlay" id="modal-kick">
+    <div class="modal">
+      <div class="modal-title">🦶 Kick Player — <span id="kick-name"></span></div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Reason</label>
+          <input class="form-input" type="text" id="kick-reason" placeholder="Reason for kick...">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal('modal-kick')">Cancel</button>
+        <button class="btn btn-danger" onclick="confirmKick()">🦶 Kick</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL: BAN ──────────────────────────────────── -->
+  <div class="modal-overlay" id="modal-ban">
+    <div class="modal">
+      <div class="modal-title">🚫 Ban Player — <span id="ban-name"></span></div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Reason</label>
+          <input class="form-input" type="text" id="ban-reason" placeholder="Reason for ban...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Duration</label>
+          <select class="form-select" id="ban-duration">
+            <option value="60">1 Hour</option>
+            <option value="360">6 Hours</option>
+            <option value="1440">1 Day</option>
+            <option value="10080">7 Days</option>
+            <option value="43200">30 Days</option>
+            <option value="-1" selected>Permanent</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal('modal-ban')">Cancel</button>
+        <button class="btn btn-danger" onclick="confirmBan()">🚫 Ban</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL: WARN ─────────────────────────────────── -->
+  <div class="modal-overlay" id="modal-warn">
+    <div class="modal">
+      <div class="modal-title">⚠️ Warn Player — <span id="warn-name"></span></div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Warning Message</label>
+          <textarea class="form-textarea" id="warn-reason" placeholder="Describe the warning..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal('modal-warn')">Cancel</button>
+        <button class="btn btn-primary" onclick="confirmWarn()">⚠️ Warn</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL: INSERT ROW ─────────────────────────────── -->
+  <div class="modal-overlay" id="modal-insert">
+    <div class="modal" style="min-width:420px">
+      <div class="modal-title">+ Insert Row — <span id="insert-table-name"></span></div>
+      <div class="modal-body" id="insert-fields" style="max-height:340px;overflow-y:auto;"></div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal('modal-insert')">Cancel</button>
+        <button class="btn btn-primary" onclick="confirmInsert()">+ Insert</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL: EDIT CELL ─────────────────────────────── -->
+  <div class="modal-overlay" id="modal-edit">
+    <div class="modal">
+      <div class="modal-title">✏️ Edit Cell</div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" id="edit-col-label">Value</label>
+          <textarea class="form-textarea" id="edit-value" rows="3"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal('modal-edit')">Cancel</button>
+        <button class="btn btn-primary" onclick="confirmEdit()">✔ Save</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /desktop -->
+
+<script src="app.js"></script>
+</body>
+</html>
