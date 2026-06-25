@@ -341,6 +341,20 @@
     </div>
   </div>
 
+  <!-- ── MODAL: CONFIRM DELETE ────────────────────────── -->
+  <div class="modal-overlay" id="modal-confirm-delete">
+    <div class="modal">
+      <div class="modal-title">🗑️ Delete Row</div>
+      <div class="modal-body">
+        <p id="confirm-delete-msg" style="color: var(--text-secondary); margin: 0; font-size: 0.9rem;"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal('modal-confirm-delete')">Cancel</button>
+        <button class="btn btn-danger" id="confirm-delete-btn">🗑️ Delete</button>
+      </div>
+    </div>
+  </div>
+
 </div><!-- /desktop -->
 
 <script src="app.js"></script>

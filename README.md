@@ -1,14 +1,14 @@
 # rde_admin
-🐉 ULTIMATE IN-GAME ADMIN DESKTOP V1.1.1 — Built on ox_core & Native RPC! 🛠
+🐉 ULTIMATE IN-GAME ADMIN DESKTOP V1.1.2 — Built on ox_core & Native RPC! 🛠
 
-<img width="1024" height="1024" alt="AiArt_1772326578744" src="https://github.com/user-attachments/assets/4ae54f1b-63ef-4efa-99eb-ce21dcfafdcc" />
+<img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/PLACEHOLDER_BANNER" />
 
 PREVIEW:
-[[https://www.youtube.com/watch?v=RxyxfHsvO4]](https://www.youtube.com/watch?v=RxyxfHsvO4)
+https://www.youtube.com/watch?v=YOUR_VIDEO_ID
 
 # 🐉 rde_admin
 
-[![Version](https://img.shields.io/badge/version-1.1.1-red?style=for-the-badge)](https://github.com/RedDragonElite/rde_admin)
+[![Version](https://img.shields.io/badge/version-1.1.2-red?style=for-the-badge)](https://github.com/RedDragonElite/rde_admin)
 [![License](https://img.shields.io/badge/license-RDE%20Black%20Flag-black?style=for-the-badge)](LICENSE)
 [![FiveM](https://img.shields.io/badge/FiveM-Compatible-blue?style=for-the-badge)](https://fivem.net)
 [![ox_core](https://img.shields.io/badge/Framework-ox__core-blue?style=for-the-badge)](https://github.com/communityox/ox_core)
@@ -40,6 +40,7 @@ We said no.
 | Discord webhooks for ban logs (deletable) | Live admin-only console feed in-game |
 | `lib.callback` everywhere (404s on b3000+) | Native RPC layer — zero ox_lib in the critical path |
 | Locks you out if one permission is wrong | Triple-layer fallback — one mis-config can't kill access |
+| DB row delete drops GTA to windowed mode (native `confirm()` popup) | NUI-native confirm modal — zero GTA focus loss, stays fully in-panel |
 | 0.5ms+ idle | < 0.01ms idle when the panel is closed |
 | No locale support | Full EN / DE out of the box |
 | No diagnostic tools | `/rde_admin_check` shows exactly *why* permission failed |
@@ -58,17 +59,13 @@ We said no.
 - 🛠 **Auto-Migration** — `rde_admin_warns` table auto-creates on first boot, no SQL import needed
 - 🌍 **Multilanguage** — EN / DE out of the box, add any language in minutes
 - 🛡 **Server-Side Authority** — every callback gated by `adminGuard()`, source coerced to number, all Ox calls pcall-wrapped
+- 🪟 **Zero GTA Focus Loss** — all confirmations (including DB row delete) use NUI-native modals — no native `confirm()` dialogs that drop GTA to windowed mode
 
 ---
 
 ## 📸 Screenshots
 
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/09d024c2-b71d-4874-a5fc-91a0bee9c846" />
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/937ef934-34d1-4a8c-88c4-c2118cc4cb01" />
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/20559b39-f0db-4f89-afe6-576b2945b270" />
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/e3e6778a-c686-46d0-94b5-db89f69c71f3" />
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/29e66e95-4657-4aca-a413-00d06efc57e6" />
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/51f702ac-38a9-4fd2-92c4-ef94fba3d693" />
+> Coming soon — drop a PR with your screenshots!
 
 The dashboard, players list, database browser, and live console — all in one draggable desktop window.
 
@@ -330,9 +327,9 @@ This was the v1.0.x NUI hostname bug — fixed in v1.1.0. If you're seeing it on
 
 ### Console page is empty
 
-If you're on **< v1.1.1**: this was a missing initial-buffer load. Update to v1.1.1.
+If you're on **< v1.1.1**: this was a missing initial-buffer load. Update to v1.1.2.
 
-If you're on **v1.1.1+** and still seeing it:
+If you're on **v1.1.2+** and still seeing it:
 
 ```
 ✅ Confirm Config.Debug = true and check F8 for "rpc PENDING" / "rpc RESPONSE" lines on Console page open
@@ -446,6 +443,38 @@ PRs are always welcome.
 - ✅ **Keep the header** — credit where it's due
 - ❌ **Don't sell it** — commercial use = instant DMCA + public shaming on Nostr
 - ❌ **Don't be a skid** — copy-paste without reading will break things
+
+---
+
+## 📋 Changelog
+
+### v1.1.2 — 2026-06-25
+**🐛 Bugfix — No more GTA window-mode on DB row delete**
+
+- **Fixed:** Deleting a database row triggered `window.confirm()` — a native browser dialog that causes GTA V to lose focus and drop to windowed mode every single time. Unacceptable.
+- **Replaced** the native `confirm()` call in `deleteDbRow()` with a proper **NUI-native confirm modal** (`modal-confirm-delete`) — same style as the existing kick/ban/warn modals, fully inside the panel, zero GTA focus loss.
+- Button listener clone-trick (`cloneNode`) prevents stale event handler accumulation across multiple delete operations.
+
+---
+
+### v1.1.1 — Console page & buffer fixes
+- Fixed missing initial-buffer load on Console page open
+- Live console feed now pre-populates on panel open instead of waiting for next server print
+
+### v1.1.0 — NUI hostname fix & Native RPC layer
+- **Breaking fix:** NUI fetch URLs were resolving as `cfx-nui-rde_admin` in some FiveM builds — patched with dynamic hostname detection via `GetParentResourceName()`
+- Replaced `lib.callback` entirely with a 40-line native RPC layer (monotonic request-IDs, single-shot resolve guard, no vararg-with-nil edge cases)
+- Permission cache introduced — first lookup cached per session
+
+### v1.0.x — Initial public release
+- Full desktop window UI (draggable, traffic-light controls, multi-page sidebar)
+- Triple admin verification (ACE + ox_core groups + identifier fallback)
+- Player management: kick, ban, warn, freeze, god, revive, health/armour, spectate, bring, teleport
+- Ingame Database Manager with raw SQL + CRUD (DDL blocked server-side)
+- Native `Ox.BanUser` / `Ox.UnbanUser` ban management
+- Live server console relay (admin-only)
+- EN / DE locale support
+- Auto-migration of `rde_admin_warns` table on first boot
 
 ---
 

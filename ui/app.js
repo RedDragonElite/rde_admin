@@ -682,12 +682,20 @@ async function runQuery() {
   document.getElementById('db-page-info').textContent = `${rows.length} rows returned`;
 }
 
-async function deleteDbRow(pkCol, pkVal) {
+function deleteDbRow(pkCol, pkVal) {
   if (!dbCurrentTable) return;
-  if (!confirm(`Delete row where ${pkCol} = ${pkVal}?`)) return;
-  const r = await nuiPost('dbDeleteRow', { table: dbCurrentTable, pk: pkCol, value: pkVal });
-  if (r?.ok) { notify('✅ Row deleted', 'success'); browseTable(); }
-  else notify('❌ Delete failed', 'error');
+  document.getElementById('confirm-delete-msg').textContent = `Delete row where ${pkCol} = ${pkVal}?`;
+  const btn = document.getElementById('confirm-delete-btn');
+  // Clone to remove old listeners
+  const newBtn = btn.cloneNode(true);
+  btn.parentNode.replaceChild(newBtn, btn);
+  newBtn.addEventListener('click', async () => {
+    closeModal('modal-confirm-delete');
+    const r = await nuiPost('dbDeleteRow', { table: dbCurrentTable, pk: pkCol, value: pkVal });
+    if (r?.ok) { notify('✅ Row deleted', 'success'); browseTable(); }
+    else notify('❌ Delete failed', 'error');
+  });
+  openModal('modal-confirm-delete');
 }
 
 function openEditModal(column, currentValue, pk, pkVal) {
