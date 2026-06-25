@@ -1,5 +1,5 @@
 --[[ ============================================================
-     RDE ADMIN — client/main.lua  (v1.1.1)
+     RDE ADMIN — client/main.lua  (v1.1.3)
      NUI bridge · cursor management · key handler · native RPC
      Red Dragon Elite | rd-elite.com
      ─────────────────────────────────────────────────────────────
@@ -151,14 +151,46 @@ RegisterCommand('rde_admin_toggle', function()
 end, false)
 
 -- ESC handler: detect ESC while panel is open and close it.
--- We do NOT DisableControlAction here — that caused the pause-menu flash
--- and movement-lock bug. SetNuiFocusKeepInput(true) is the input isolation
--- mechanism per FiveM docs; this thread is a pure Lua fallback.
+-- We do NOT DisableControlAction here for movement -- that caused the
+-- pause-menu flash and movement-lock bug. SetNuiFocusKeepInput(true)
+-- is the input isolation mechanism per FiveM docs; this thread is a
+-- pure Lua fallback for ESC only.
 CreateThread(function()
     while true do
         if isOpen then
             if IsControlJustPressed(0, 200) or IsDisabledControlJustPressed(0, 200) then
                 closePanel()
+            end
+            Wait(0)
+        else
+            Wait(100)
+        end
+    end
+end)
+
+-- ATTACK / COMBAT INPUT BLOCKER
+-- While the NUI is open, GTA still receives mouse-click events as
+-- INPUT_ATTACK (24) / INPUT_ATTACK2 (25). This causes the ped to
+-- fire weapons when clicking inside the panel. Block all combat
+-- inputs for as long as the panel is visible; release immediately
+-- on close so nothing lingers.
+local BLOCKED_CONTROLS = {
+    24,  -- INPUT_ATTACK
+    25,  -- INPUT_ATTACK2
+    47,  -- INPUT_MELEE_ATTACK_LIGHT
+    140, -- INPUT_MELEE_ATTACK_HEAVY
+    141, -- INPUT_MELEE_ATTACK_ALTERNATE
+    263, -- INPUT_VEH_ATTACK
+    264, -- INPUT_VEH_ATTACK2
+    69,  -- INPUT_MELEE_ATTACK1
+    70,  -- INPUT_MELEE_ATTACK2
+}
+
+CreateThread(function()
+    while true do
+        if isOpen then
+            for _, control in ipairs(BLOCKED_CONTROLS) do
+                DisableControlAction(0, control, true)
             end
             Wait(0)
         else

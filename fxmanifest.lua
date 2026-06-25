@@ -12,6 +12,8 @@
 
     ════════════════════════════════════════════════════════════════
     --- v1.1.1 (Console page hydration)
+    --- v1.1.2 (NUI confirm modal — no more window.confirm() GTA focus loss)
+    --- v1.1.3 (Attack input blocker — DisableControlAction while NUI open)
     ════════════════════════════════════════════════════════════════
     • The dedicated Console page (sidebar → Tools → Console) now
       pulls the existing server-side buffer on open, so admins see
@@ -146,7 +148,7 @@ lua54 'yes'
 
 name        'rde_admin'
 description '🐉 RDE Admin — Ingame Desktop Admin Panel with Player Manager, Console & DB CRUD'
-version     '1.1.1'
+version     '1.1.3'
 author      'Red Dragon Elite (RDE) — SerpentsByte | rd-elite.com'
 repository  'https://github.com/RedDragonElite/rde_admin'
 

@@ -1,5 +1,5 @@
 # rde_admin
-🐉 ULTIMATE IN-GAME ADMIN DESKTOP V1.1.2 — Built on ox_core & Native RPC! 🛠
+🐉 ULTIMATE IN-GAME ADMIN DESKTOP V1.1.3 — Built on ox_core & Native RPC! 🛠
 
 <img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/PLACEHOLDER_BANNER" />
 
@@ -8,7 +8,7 @@ https://www.youtube.com/watch?v=YOUR_VIDEO_ID
 
 # 🐉 rde_admin
 
-[![Version](https://img.shields.io/badge/version-1.1.2-red?style=for-the-badge)](https://github.com/RedDragonElite/rde_admin)
+[![Version](https://img.shields.io/badge/version-1.1.3-red?style=for-the-badge)](https://github.com/RedDragonElite/rde_admin)
 [![License](https://img.shields.io/badge/license-RDE%20Black%20Flag-black?style=for-the-badge)](LICENSE)
 [![FiveM](https://img.shields.io/badge/FiveM-Compatible-blue?style=for-the-badge)](https://fivem.net)
 [![ox_core](https://img.shields.io/badge/Framework-ox__core-blue?style=for-the-badge)](https://github.com/communityox/ox_core)
@@ -41,6 +41,7 @@ We said no.
 | `lib.callback` everywhere (404s on b3000+) | Native RPC layer — zero ox_lib in the critical path |
 | Locks you out if one permission is wrong | Triple-layer fallback — one mis-config can't kill access |
 | DB row delete drops GTA to windowed mode (native `confirm()` popup) | NUI-native confirm modal — zero GTA focus loss, stays fully in-panel |
+| Clicking in the panel fires your weapon / triggers attacks | All combat inputs disabled while the panel is open — releases clean on close |
 | 0.5ms+ idle | < 0.01ms idle when the panel is closed |
 | No locale support | Full EN / DE out of the box |
 | No diagnostic tools | `/rde_admin_check` shows exactly *why* permission failed |
@@ -60,6 +61,7 @@ We said no.
 - 🌍 **Multilanguage** — EN / DE out of the box, add any language in minutes
 - 🛡 **Server-Side Authority** — every callback gated by `adminGuard()`, source coerced to number, all Ox calls pcall-wrapped
 - 🪟 **Zero GTA Focus Loss** — all confirmations (including DB row delete) use NUI-native modals — no native `confirm()` dialogs that drop GTA to windowed mode
+- 🔒 **Attack Input Blocker** — `DisableControlAction` thread kills all combat inputs while the panel is open; releases instantly on close — no more accidental weapon fire when clicking in the UI
 
 ---
 
@@ -447,6 +449,15 @@ PRs are always welcome.
 ---
 
 ## 📋 Changelog
+
+### v1.1.3 — 2026-06-25
+**🐛 Bugfix — Attack inputs blocked while NUI panel is open**
+
+- **Fixed:** While the admin panel was open, GTA V still received mouse-click events as `INPUT_ATTACK` (control 24) / `INPUT_ATTACK2` (25) and other combat inputs — meaning clicking inside the panel could fire your weapon, start a melee attack, or trigger vehicle weapons.
+- **Added** a dedicated `CreateThread` loop that calls `DisableControlAction(0, control, true)` every tick for all combat/attack inputs while `isOpen == true`, and stops the moment the panel closes. Zero residual blocking — opens and releases cleanly.
+- **Blocked inputs:** `INPUT_ATTACK`, `INPUT_ATTACK2`, `INPUT_MELEE_ATTACK_LIGHT/HEAVY/ALTERNATE`, `INPUT_MELEE_ATTACK1/2`, `INPUT_VEH_ATTACK`, `INPUT_VEH_ATTACK2`
+
+---
 
 ### v1.1.2 — 2026-06-25
 **🐛 Bugfix — No more GTA window-mode on DB row delete**
